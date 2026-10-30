@@ -21,9 +21,9 @@ StatItem {
 
   textColor: {
     if (charging)
-    return Theme.success;
+    return Theme.accent;
     if (level <= 0.15)
     return Theme.error;
-    return Theme.foreground;
+    return Theme.success;
   }
 }
