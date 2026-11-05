@@ -146,31 +146,11 @@ PanelWindow {
       y: root.edge === Bar.Top ? -root.offset : root.edge === Bar.Bottom ? root.offset : 0
     }
 
-    // Invisible copy of the bar's shape, used only to cast the shadow
-    Rectangle {
-      id: shadowCaster
-
-      anchors.fill: parent
-      visible: false
-      color: "black"
-      topLeftRadius: surface.topLeftRadius
-      topRightRadius: surface.topRightRadius
-      bottomLeftRadius: surface.bottomLeftRadius
-      bottomRightRadius: surface.bottomRightRadius
+    Shadow {
+      target: surface
+      offsetX: root.vertical ? (root.edge === Bar.Left ? Theme.shadowOffset : -Theme.shadowOffset) : 0
+      offsetY: root.vertical ? 0 : (root.edge === Bar.Top ? Theme.shadowOffset : -Theme.shadowOffset)
     }
-
-    // Declared before the surface, so it draws underneath it
-    MultiEffect {
-      anchors.fill: shadowCaster
-      source: shadowCaster
-      blurMax: Theme.shadowBlurMax
-      shadowEnabled: true
-      shadowColor: Theme.shadowColor
-      shadowBlur: Theme.shadowBlur
-      shadowVerticalOffset: root.vertical ? 0 : (root.edge === Bar.Top ? Theme.shadowOffset : -Theme.shadowOffset)
-      shadowHorizontalOffset: root.vertical ? (root.edge === Bar.Left ? Theme.shadowOffset : -Theme.shadowOffset) : 0
-    }
-
     BarSurface {
       id: surface
 

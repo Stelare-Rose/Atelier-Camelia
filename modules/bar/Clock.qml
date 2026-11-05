@@ -6,6 +6,7 @@ Row {
   id: root
 
   readonly property alias calendarOpen: calendar.shown
+  readonly property alias calendar: calendar
 
   readonly property bool hovered: clockHover.hovered || calendar.hovered
 

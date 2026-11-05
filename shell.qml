@@ -3,7 +3,9 @@ import QtQuick.Layouts
 import Quickshell
 import qs.config
 import qs.components
+import qs.services
 import qs.modules.bar
+import qs.modules.notifications
 
 ShellRoot {
   Variants {
@@ -53,14 +55,12 @@ ShellRoot {
          Text { text: "bottom"; color: Theme.foreground }
        }
 
-       Bar {
+       NotificationPopups {
          screen: screenScope.modelData
-         edge: Bar.Right
-         startInset: topBar.pinned ? 0 : Theme.barSize
-         endInset: bottomBar.pinned ? 0 : Theme.barSize
-         thickness: 48
-         Text { text: "L"; color: Theme.foreground }
+         visible: screenScope.modelData.name === Niri.focusedOutput
+         topBar: topBar
+         calendar: clock.calendar
        }
-    }
+     }
   }
 }

@@ -10,6 +10,9 @@ Item {
     property real implicitSize: 16
 
     readonly property string iconSource: {
+        if (!root.appId)
+            return "";
+
         const entry = DesktopEntries.heuristicLookup(root.appId);
         return Quickshell.iconPath(entry?.icon ?? root.appId, true);
     }

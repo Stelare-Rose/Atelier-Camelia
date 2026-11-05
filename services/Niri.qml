@@ -11,6 +11,7 @@ Singleton {
   property var windows: []
 
   readonly property bool available: !!Quickshell.env("NIRI_SOCKET")
+  readonly property string focusedOutput: workspaces.find(workspace => workspace.is_focused)?.output ?? ""
 
 
   function workspacesOn(outputName) {

@@ -16,6 +16,9 @@ PanelWindow {
   readonly property alias hovered: popupHover.hovered
 
   readonly property bool shown: open || fadeTimer.running
+  readonly property int shadowRoom: Theme.shadowBlurMax + Theme.shadowOffset
+
+  readonly property real bottom: margins.top + shadowRoom + card.height
 
   visible: shown
 
@@ -56,9 +59,6 @@ PanelWindow {
     right: true
   }
 
-  margins.top: barWindow.height
-  margins.right: barWindow.width - anchorRight
-
   onOpenChanged: {
     if (!open) {
       fadeTimer.restart();
@@ -73,8 +73,11 @@ PanelWindow {
     year = today.getFullYear();
   }
 
-  implicitWidth: card.width
-  implicitHeight: card.height
+  implicitWidth: card.width + shadowRoom * 2
+  implicitHeight: card.height + shadowRoom * 2
+
+  margins.top: barWindow.size - shadowRoom
+  margins.right: barWindow.width - anchorRight - shadowRoom
   color: "transparent"
 
   exclusionMode: ExclusionMode.Ignore
@@ -92,15 +95,13 @@ PanelWindow {
     id: emptyRegion
   }
 
-  Rectangle {
-    id: card
+  Item {
+    id: panel
 
-    readonly property int cellSize: 28
-
-    width: 260
-    implicitHeight: layout.implicitHeight + Theme.barSidePadding * 4
-    radius: Theme.barRadius
-    color: Theme.background
+    x: root.shadowRoom
+    y: root.shadowRoom
+    width: card.width
+    height: card.height
 
     opacity: root.open ? 1 : 0
 
@@ -111,6 +112,25 @@ PanelWindow {
     transform: Translate {
       y: root.open ? 0 : -8
 
+      Behavior on y {
+        NumberAnimation { duration: Theme.revealDuration; easing.type: Easing.OutCubic }
+      }
+    }
+
+    Shadow {
+      target: card
+    }
+
+    Rectangle {
+      id: card
+
+
+      readonly property int cellSize: 28
+
+      width: 260
+      implicitHeight: layout.implicitHeight + Theme.barSidePadding * 4
+      radius: Theme.barRadius
+      color: Theme.background
       Behavior on y {
         NumberAnimation { duration: Theme.revealDuration; easing.type: Easing.OutCubic }
       }
