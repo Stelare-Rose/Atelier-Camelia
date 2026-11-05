@@ -4,5 +4,5 @@ import Quickshell
 
 Singleton {
     readonly property string name: "Atelier-Camelia"
-    readonly property string version: "0.1.1"
+    readonly property string version: "0.1.2"
 }

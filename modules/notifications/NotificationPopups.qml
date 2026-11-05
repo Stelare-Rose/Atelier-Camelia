@@ -8,14 +8,18 @@ import qs.modules.bar
 PanelWindow {
   id: root
 
+  // Bar the notifications stay below; optional
   property Bar topBar: null
 
+  // Popups the notifications stack below while they're open
   property var popups: []
 
   readonly property int shadowRoom: Theme.shadowBlurMax + Theme.shadowOffset
 
+  // Visible bottom edge of the top bar. offset is animated, so this follows the slide.
   readonly property real barBottom: topBar ? Math.max(0, topBar.thickness - topBar.offset) : 0
 
+  // Lowest bottom edge of any open popup, animated so the notifications glide around it
   property real popupBottom: {
     let bottom = 0;
     for (const popup of popups) {
@@ -25,11 +29,12 @@ PanelWindow {
     return bottom;
   }
 
+  readonly property real listTop: Math.max(barBottom, popupBottom) + Theme.barMargin
+
   Behavior on popupBottom {
     NumberAnimation { duration: Theme.revealDuration; easing.type: Easing.OutCubic }
   }
 
-  readonly property real listTop: Math.max(barBottom, popupBottom) + Theme.barMargin
   anchors {
     top: true
     right: true
