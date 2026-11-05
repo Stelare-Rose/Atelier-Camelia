@@ -45,24 +45,22 @@ ShellRoot {
         }
       }
 
-      /*
-      Bar {
-        id: bottomBar
-        screen: screenScope.modelData
-        edge: Bar.Bottom
+       Bar {
+         id: bottomBar
+         screen: screenScope.modelData
+         edge: Bar.Bottom
 
-        Text { text: "bottom"; color: Theme.foreground }
-      }
+         Text { text: "bottom"; color: Theme.foreground }
+       }
 
-      Bar {
-        screen: screenScope.modelData
-        edge: Bar.Right
-        startInset: topBar.pinned ? 0 : Theme.barSize
-        endInset: bottomBar.pinned ? 0 : Theme.barSize
-        thickness: 48
-        Text { text: "L"; color: Theme.foreground }
-      }
-      */
+       Bar {
+         screen: screenScope.modelData
+         edge: Bar.Right
+         startInset: topBar.pinned ? 0 : Theme.barSize
+         endInset: bottomBar.pinned ? 0 : Theme.barSize
+         thickness: 48
+         Text { text: "L"; color: Theme.foreground }
+       }
     }
   }
 }

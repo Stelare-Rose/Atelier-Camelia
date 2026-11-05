@@ -111,6 +111,11 @@ Singleton {
   readonly property int workspaceColumnSpacing: 2
   readonly property int workspaceColumnRadius: 5
 
+  readonly property color shadowColor: dark ? Qt.rgba(0, 0, 0, 0.45) : Qt.rgba(0, 0, 0, 0.25)
+  readonly property real shadowBlur: 1.0
+  readonly property int shadowBlurMax: 20
+  readonly property int shadowOffset: 2
+
   readonly property list<color> accents: [
     strawberry, orange, lemon, leaf, mint, sky,
     blueberry, grape, plum, lavender, lilac, pink

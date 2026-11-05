@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
+import QtQuick.Effects
 import qs.config
 import qs.components
 
@@ -44,7 +45,13 @@ PanelWindow {
 
   readonly property int size: thickness + Theme.barMargin * 2
 
-  property real offset: revealed ? 0 : size
+  readonly property int shadowRoom: Theme.shadowBlurMax + Theme.shadowOffset
+
+  readonly property int windowStartMargin: Math.max(0, startInset - shadowRoom)
+  readonly property int windowEndMargin: Math.max(0, endInset - shadowRoom)
+
+  readonly property int surfaceStart: startInset - windowStartMargin + Theme.barMargin
+  readonly property int surfaceEnd: endInset - windowEndMargin + Theme.barMargin
 
   property int startInset: 0
   property int endInset: 0
@@ -70,15 +77,19 @@ PanelWindow {
     right: edge !== Bar.Left
   }
 
+  property real offset: revealed ? 0 : size + shadowRoom
+
   margins {
-    top: vertical ? startInset : 0
-    bottom: vertical ? endInset : 0
-    left: vertical ? 0 : startInset
-    right: vertical ? 0 : endInset
+    top: vertical ? windowStartMargin : 0
+    bottom: vertical ? windowEndMargin : 0
+    left: vertical ? 0 : windowStartMargin
+    right: vertical ? 0 : windowEndMargin
   }
 
-  implicitWidth: vertical ? size : 0
-  implicitHeight: vertical ? 0 : size
+  implicitWidth: vertical ? size + shadowRoom : 0
+  implicitHeight: vertical ? 0 : size + shadowRoom
+
+  // Reserve the bar itself, not the shadow room
   exclusiveZone: autoHide && !pinned ? 0 : size
 
   color: "transparent"
@@ -122,20 +133,56 @@ PanelWindow {
     interval: Theme.hideDelay
     onTriggered: root.revealed = false
   }
+  Item {
+    id: surfaceContainer
 
-  BarSurface {
-    id: surface
-
-    vertical: root.vertical
-
-    width: root.vertical ? root.thickness : parent.width - Theme.barMargin * 2
-    height: root.vertical ? parent.height - Theme.barMargin * 2 : root.thickness
-    x: root.vertical ? (root.edge === Bar.Right ? parent.width - width : 0) : Theme.barMargin
-    y: root.vertical ? Theme.barMargin : (root.edge === Bar.Bottom ? parent.height - height : 0)
+    width: root.vertical ? root.thickness : parent.width - root.surfaceStart - root.surfaceEnd
+    height: root.vertical ? parent.height - root.surfaceStart - root.surfaceEnd : root.thickness
+    x: root.vertical ? (root.edge === Bar.Right ? parent.width - width : 0) : root.surfaceStart
+    y: root.vertical ? root.surfaceStart : (root.edge === Bar.Bottom ? parent.height - height : 0) 
 
     transform: Translate {
       x: root.edge === Bar.Left ? -root.offset : root.edge === Bar.Right ? root.offset : 0
       y: root.edge === Bar.Top ? -root.offset : root.edge === Bar.Bottom ? root.offset : 0
     }
-  }
-}
+
+    // Invisible copy of the bar's shape, used only to cast the shadow
+    Rectangle {
+      id: shadowCaster
+
+      anchors.fill: parent
+      visible: false
+      color: "black"
+      topLeftRadius: surface.topLeftRadius
+      topRightRadius: surface.topRightRadius
+      bottomLeftRadius: surface.bottomLeftRadius
+      bottomRightRadius: surface.bottomRightRadius
+    }
+
+    // Declared before the surface, so it draws underneath it
+    MultiEffect {
+      anchors.fill: shadowCaster
+      source: shadowCaster
+      blurMax: Theme.shadowBlurMax
+      shadowEnabled: true
+      shadowColor: Theme.shadowColor
+      shadowBlur: Theme.shadowBlur
+      shadowVerticalOffset: root.vertical ? 0 : (root.edge === Bar.Top ? Theme.shadowOffset : -Theme.shadowOffset)
+      shadowHorizontalOffset: root.vertical ? (root.edge === Bar.Left ? Theme.shadowOffset : -Theme.shadowOffset) : 0
+    }
+
+    BarSurface {
+      id: surface
+
+      anchors.fill: parent
+      vertical: root.vertical
+      attachedEdge: {
+        switch (root.edge) {
+          case Bar.Top: return Edges.Top;
+          case Bar.Bottom: return Edges.Bottom;
+          case Bar.Left: return Edges.Left;
+          case Bar.Right: return Edges.Right;
+        }
+      }
+    }
+  }}
