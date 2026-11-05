@@ -40,13 +40,10 @@ ShellRoot {
             anchors.verticalCenter: parent.verticalCenter
             spacing: Theme.barSpacing
 
-            BrightnessItem {
-              id: brightness
-              screen: screenScope.modelData
-            }
-
+            BrightnessItem { screen: screenScope.modelData }
+            VolumeItem {}
             Battery {}
-            Clock { id: clock }
+            Clock {}
           }
         }
       }

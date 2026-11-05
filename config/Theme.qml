@@ -131,6 +131,10 @@ Singleton {
     for (let i = 0; i < key.length; i++)
     hash = (hash * 31 + key.charCodeAt(i)) | 0;
     return accents[Math.abs(hash) % accents.length];
-    }
+  }
+
+  function shade(color, amount) {
+    return dark ? Qt.lighter(color, 1 + amount) : Qt.darker(color, 1 + amount);
+  }
 }
 

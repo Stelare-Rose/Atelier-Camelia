@@ -5,6 +5,9 @@ import qs.config
 Slider {
   id: root
 
+  wheelEnabled: true
+  stepSize: 0.05
+
   implicitHeight: 20
 
   background: Rectangle {

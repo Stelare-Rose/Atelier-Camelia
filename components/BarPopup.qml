@@ -19,6 +19,9 @@ PanelWindow {
   property bool open: false
   readonly property bool hovered: popupHover.hovered
 
+  // Set while something in the popup needs typing input (e.g. PercentInput)
+  property bool keyboardGrabbed: false
+
   // True while open, and for the length of the fade-out after closing
   readonly property bool shown: open || fadeTimer.running
 
@@ -27,13 +30,21 @@ PanelWindow {
 
   readonly property int shadowRoom: Theme.shadowBlurMax + Theme.shadowOffset
   readonly property var barWindow: anchorItem.QsWindow.window
-  readonly property bool wantsOpen: triggerHovered || hovered
+  readonly property bool wantsOpen: triggerHovered || hovered || keyboardGrabbed
 
   // mapToItem() isn't reactive, so this is recomputed when the anchor moves or resizes
   property real anchorRight: 0
 
   function updateAnchor() {
     anchorRight = anchorItem.mapToItem(null, anchorItem.width, 0).x;
+  }
+
+  function grabKeyboard() {
+    keyboardGrabbed = true;
+  }
+
+  function releaseKeyboard() {
+    keyboardGrabbed = false;
   }
 
   screen: barWindow?.screen ?? null
@@ -54,6 +65,7 @@ PanelWindow {
   exclusionMode: ExclusionMode.Ignore
   WlrLayershell.layer: WlrLayer.Top
   WlrLayershell.namespace: "stelare-popup"
+  WlrLayershell.keyboardFocus: keyboardGrabbed ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
   mask: open ? cardRegion : emptyRegion
 
@@ -72,19 +84,23 @@ PanelWindow {
       updateAnchor();
     } else {
       fadeTimer.restart();
+      releaseKeyboard();
     }
   }
+
+  // Register with the bar so it stays open while this popup is shown.
+  // barWindow is null for a moment at startup, so this runs when it's set.
   onBarWindowChanged: {
     if (barWindow && !barWindow.popups.includes(root))
-    barWindow.popups = barWindow.popups.concat([root]);
-  }
-
-  Component.onDestruction: {
-    if (barWindow)
-    barWindow.popups = barWindow.popups.filter(popup => popup !== root);
+      barWindow.popups = barWindow.popups.concat([root]);
   }
 
   Component.onCompleted: updateAnchor()
+
+  Component.onDestruction: {
+    if (barWindow)
+      barWindow.popups = barWindow.popups.filter(popup => popup !== root);
+  }
 
   Connections {
     target: root.anchorItem
