@@ -121,6 +121,11 @@ Singleton {
   readonly property int notificationPadding: 8
   readonly property int notificationIconSize: 24
 
+  readonly property int launcherWidth: 520
+  readonly property int launcherItemHeight: 44
+  readonly property int launcherIconSize: 24
+  readonly property int launcherVisibleItems: 8
+
   readonly property list<color> accents: [
     strawberry, orange, lemon, leaf, mint, sky,
     blueberry, grape, plum, lavender, lilac, pink

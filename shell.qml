@@ -6,6 +6,8 @@ import qs.components
 import qs.services
 import qs.modules.bar
 import qs.modules.notifications
+import qs.modules.launcher
+import Quickshell.Io
 
 ShellRoot {
   Variants {
@@ -62,6 +64,8 @@ ShellRoot {
          visible: screenScope.modelData.name === Niri.focusedOutput
          topBar: topBar
        }
+
      }
   }
+       LauncherWindow {}
 }
