@@ -14,6 +14,14 @@ Singleton {
   property real memoryTotal: 0
   property real diskUsed: 0
   property real diskTotal: 0
+  property real networkDown: 0
+  property real networkUp: 0
+
+  property var excludedInterfaces: /^(lo|veth|docker|br-|virbr|tailscale|tun|wg)/
+
+  property real _lastRx: 0
+  property real _lastTx: 0
+  property real _lastNetworkTime: 0
 
   readonly property real memory: memoryTotal > 0 ? memoryUsed / memoryTotal : 0
   readonly property real disk: diskTotal > 0 ? diskUsed / diskTotal : 0
@@ -34,6 +42,7 @@ Singleton {
       stat.reload();
       meminfo.reload();
       gpuBusy.reload();
+      netDev.reload();
       df.running = true;
     }
   }
@@ -114,6 +123,12 @@ Singleton {
     }
   }
 
+  FileView {
+    id: netDev
+    path: "/proc/net/dev"
+    onLoaded: root._parseNetwork(text())
+  }
+
   function _parseCpu(data) {
     const fields = data.split("\n")[0].trim().split(/\s+/).slice(1).map(Number);
     const idle = fields[3] + fields[4];
@@ -181,5 +196,32 @@ Singleton {
     } else if (result === "intel") {
       _gpuBackend = "intel";
     }
+  }
+
+  function _parseNetwork(data) {
+    let rx = 0;
+    let tx = 0;
+
+    for (const line of data.split("\n").slice(2)) {
+      const [name, rest] = line.split(":");
+      if (!rest || excludedInterfaces.test(name.trim()))
+      continue;
+
+      const fields = rest.trim().split(/\s+/).map(Number);
+      rx += fields[0];
+      tx += fields[8];
+    }
+
+    const now = Date.now();
+
+    if (_lastNetworkTime > 0) {
+      const seconds = (now - _lastNetworkTime) / 1000;
+      networkDown = Math.max(0, (rx - _lastRx) / seconds);
+      networkUp = Math.max(0, (tx - _lastTx) / seconds);
+    }
+
+    _lastRx = rx;
+    _lastTx = tx;
+    _lastNetworkTime = now;
   }
 }

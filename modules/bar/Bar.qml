@@ -16,7 +16,9 @@ PanelWindow {
   }
   property bool keepOpen: false
 
-  readonly property bool held: pinned || keepOpen
+  property var popups: []
+
+  readonly property bool held: pinned || keepOpen || popups.some(popup => popup.shown)
 
   onHeldChanged: {
     if (held) {

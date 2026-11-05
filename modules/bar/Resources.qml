@@ -30,4 +30,16 @@ Row {
     label: Format.usage(SystemStats.diskUsed, SystemStats.diskTotal)
     textColor: Theme.accent
   }
+
+  StatItem {
+    icon: "\u{F01DA}"
+    label: Format.rate(SystemStats.networkDown)
+    textColor: Theme.accent
+  }
+
+  StatItem {
+    icon: "\u{F0552}"
+    label: Format.rate(SystemStats.networkUp)
+    textColor: Theme.accent
+  }
 }

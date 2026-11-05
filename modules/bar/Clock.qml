@@ -26,10 +26,6 @@ Row {
     precision: SystemClock.Minutes
   }
 
-  HoverHandler {
-    id: clockHover
-  }
-
   Timer {
     id: closeTimer
     interval: Theme.hideDelay
@@ -48,8 +44,14 @@ Row {
     textColor: Theme.accent
   }
 
+  HoverHandler {
+    id: hover
+  }
+
   CalendarPopup {
     id: calendar
     anchorItem: root
+    triggerHovered: hover.hovered
   }
 }
+

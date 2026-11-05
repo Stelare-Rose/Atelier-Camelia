@@ -8,22 +8,28 @@ import qs.modules.bar
 PanelWindow {
   id: root
 
-  // What the popups stack below; both optional
   property Bar topBar: null
-  property CalendarPopup calendar: null
+
+  property var popups: []
 
   readonly property int shadowRoom: Theme.shadowBlurMax + Theme.shadowOffset
 
   readonly property real barBottom: topBar ? Math.max(0, topBar.thickness - topBar.offset) : 0
 
-  property real calendarBottom: calendar && calendar.open ? calendar.bottom : 0
+  property real popupBottom: {
+    let bottom = 0;
+    for (const popup of popups) {
+      if (popup.open)
+        bottom = Math.max(bottom, popup.bottom);
+    }
+    return bottom;
+  }
 
-  Behavior on calendarBottom {
+  Behavior on popupBottom {
     NumberAnimation { duration: Theme.revealDuration; easing.type: Easing.OutCubic }
   }
 
-  readonly property real listTop: Math.max(barBottom, calendarBottom) + Theme.barMargin
-
+  readonly property real listTop: Math.max(barBottom, popupBottom) + Theme.barMargin
   anchors {
     top: true
     right: true

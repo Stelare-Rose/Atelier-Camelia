@@ -20,7 +20,6 @@ ShellRoot {
         id: topBar
         screen: screenScope.modelData
         edge: Bar.Top
-        keepOpen: clock.calendarOpen
 
         Item {
           Layout.fillWidth: true
@@ -41,6 +40,11 @@ ShellRoot {
             anchors.verticalCenter: parent.verticalCenter
             spacing: Theme.barSpacing
 
+            BrightnessItem {
+              id: brightness
+              screen: screenScope.modelData
+            }
+
             Battery {}
             Clock { id: clock }
           }
@@ -56,10 +60,10 @@ ShellRoot {
        }
 
        NotificationPopups {
+         popups: topBar.popups
          screen: screenScope.modelData
          visible: screenScope.modelData.name === Niri.focusedOutput
          topBar: topBar
-         calendar: clock.calendar
        }
      }
   }
