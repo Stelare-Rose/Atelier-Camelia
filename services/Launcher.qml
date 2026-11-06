@@ -57,7 +57,7 @@ Singleton {
   }
 
   function run(command) {
-    Quickshell.execDetached(["sh", "-c", command]);
+    Quickshell.execDetached(["fish", "-c", command]);
     close();
   }
 
