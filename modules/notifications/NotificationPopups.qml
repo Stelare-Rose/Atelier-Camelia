@@ -88,6 +88,8 @@ PanelWindow {
 
     displaced: Transition {
       NumberAnimation { property: "y"; duration: Theme.revealDuration; easing.type: Easing.OutCubic }
+      NumberAnimation { property: "opacity"; to: 1; duration: Theme.revealDuration }
+      NumberAnimation { property: "x"; to: 0; duration: Theme.revealDuration; easing.type: Easing.OutCubic }
     }
   }
 }
